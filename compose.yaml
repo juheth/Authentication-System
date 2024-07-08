@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  database:
+    platform: windows/amd64
+    container_name: mysql-db
+    build: 
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mysql-db
+    ports:
+      - "3306:3306"
+

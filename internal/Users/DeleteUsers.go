@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func DeleteTask(w http.ResponseWriter, r *http.Request) {
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	UsersID, err := strconv.Atoi(vars["id"])
 	if err != nil {
