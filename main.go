@@ -9,9 +9,9 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	users "github.com/juheth/Registration-Form.git/Users"
 	login "github.com/juheth/Registration-Form.git/internal/Login"
 	register "github.com/juheth/Registration-Form.git/internal/Register"
-	users "github.com/juheth/Registration-Form.git/internal/Users"
 )
 
 var db *sql.DB

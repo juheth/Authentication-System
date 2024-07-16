@@ -118,7 +118,7 @@ func UserDoesNotExist(w http.ResponseWriter, r *http.Request) {
 		return
 
 	default:
-		// si funciona manda el mensake con el resultado obtenido del formulario
+		// si funciona manda el mensaje con el resultado obtenido del formulario
 		fmt.Fprintf(w, "Bienvenido, %s!", result)
 	}
 }
