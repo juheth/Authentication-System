@@ -1,13 +1,32 @@
 version: "3.9"
 services:
   database:
-    platform: windows/amd64
-    container_name: mysql-db
-    build: 
-      dockerfile: Dockerfile
+    platform: linux/amd64
+    image: mysql:latest
+    container_name: Authentication-System
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mysql-db
+      MYSQL_DATABASE: Authentication-System
+
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
 
+  app:
+    build:
+      context: .   # Asegúrate de que el Dockerfile de la aplicación esté en el mismo directorio
+    container_name: go-app
+    environment:
+      DB_HOST: database
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: juheth
+    ports:
+      - "8080:8080"   # Expone el puerto 8080 para la aplicación
+    depends_on:
+      - database
+
+volumes:
+  mysql_data:

@@ -8,13 +8,14 @@ import (
 
 var db *sql.DB
 
+// SetDB sets the database connection
 func SetDB(database *sql.DB) {
 	db = database
 }
 
+// LoginFormHandler handles the login form rendering
 func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
-	tpl := `
-	<!DOCTYPE html>
+	tpl := `<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -131,17 +132,16 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
         </form>
     </div>
 </body>
-</html>
-`
+</html>`
 
-	// Crea la plantilla llamada "login-form" y analiza el contenido de tpl (el HTML).
+	// Create the template and parse the HTML
 	t, err := template.New("login-form").Parse(tpl)
 	if err != nil {
 		http.Error(w, "Error al analizar la plantilla", http.StatusInternalServerError)
 		return
 	}
 
-	// Estructura para pasar los datos a la plantilla.
+	// Structure for passing data to the template
 	type PageData struct {
 		Message          string
 		Username         string
@@ -150,21 +150,19 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data := PageData{}
 
-	//  hace el llamado a el parámetro llamado "registered".
+	// Check if the "registered" query parameter is set
 	if r.URL.Query().Get("registered") == "true" {
-		// Si existe el parámetro, asigna un mensaje a "Message".
 		data.Message = "Usuario registrado con éxito. Por favor, inicie sesión."
 	}
 
-	// Verifica si el parámetro "showRegisterLink" está presente.
+	// Check if "showRegisterLink" is set to true
 	if r.URL.Query().Get("showRegisterLink") == "true" {
 		data.ShowRegisterLink = true
-		// También pasa los valores de "username" y "lastname" para el enlace de registro.
 		data.Username = r.URL.Query().Get("username")
 		data.Lastname = r.URL.Query().Get("lastname")
 	}
 
-	// Ejecuta la plantilla con los datos y envía el resultado a "w".
+	// Execute the template with data and send the result to the ResponseWriter
 	err = t.Execute(w, data)
 	if err != nil {
 		http.Error(w, "Error al ejecutar la plantilla", http.StatusInternalServerError)
