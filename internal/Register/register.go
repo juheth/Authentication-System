@@ -8,16 +8,17 @@ import (
 
 var db *sql.DB
 
+// SetDB sets the database connection
 func SetDB(database *sql.DB) {
 	db = database
 }
 
+// RegisterFormHandler handles the registration form rendering
 func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
-	// obtener los valores que se mandan al URL
+	// Get the username and lastname from the query parameters
 	username := r.URL.Query().Get("username")
 	lastname := r.URL.Query().Get("lastname")
 
-	// formulario de registro
 	tpl := `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -98,16 +99,16 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
         </form>
     </div>
 </body>
-</html>
-`
+</html>`
 
-	// Crear una nueva plantilla llamada "register-form" y analizar el HTML de la plantilla
+	// Create and parse the template
 	t, err := template.New("register-form").Parse(tpl)
 	if err != nil {
 		http.Error(w, "Error al renderizar el formulario", http.StatusInternalServerError)
 		return
 	}
 
+	// Passing data to the template
 	data := struct {
 		Username string
 		Lastname string
@@ -116,7 +117,7 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
 		Lastname: lastname,
 	}
 
-	// ejecuta los datos enviados y manda un resultado al ResponseWriter(w)
+	// Execute and send the result to the ResponseWriter
 	err = t.Execute(w, data)
 	if err != nil {
 		http.Error(w, "Error al renderizar el formulario", http.StatusInternalServerError)
@@ -124,27 +125,31 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// RegisterHandler handles user registration
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-
-	// analiza los datos enviados al formulario
+	// Parse the form data
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Error al analizar los datos del formulario", http.StatusBadRequest)
 		return
 	}
 
-	// obtener los valores del formulario
+	// Get values from the form
 	username := r.Form.Get("username")
 	lastname := r.Form.Get("lastname")
 
-	// sql para agregar el nuevo usuario
-	Insert := "INSERT INTO Users (username, lastname) VALUES (?, ?)"
-	_, err = db.Exec(Insert, username, lastname)
-	if err != nil {
-		http.Error(w, "Error al renderizar el formulario", http.StatusInternalServerError)
+	// Comprobar si los campos están vacíos
+	if username == "" || lastname == "" {
+		http.Error(w, "Los campos de usuario y apellido son requeridos", http.StatusBadRequest)
 		return
 	}
 
-	// Redirigir al formulario de login con mensaje de registrado con éxito
+	Insert := "INSERT INTO Users (username, lastname) VALUES (?, ?)"
+	_, err = db.Exec(Insert, username, lastname)
+	if err != nil {
+		http.Error(w, "Error al registrar el usuario: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	http.Redirect(w, r, "/?registered=true", http.StatusSeeOther)
 }
