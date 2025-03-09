@@ -15,7 +15,7 @@ services:
 
   app:
     build:
-      context: .   # Asegúrate de que el Dockerfile de la aplicación esté en el mismo directorio
+      context: . 
     container_name: go-app
     environment:
       DB_HOST: database
@@ -24,7 +24,7 @@ services:
       DB_PASSWORD: root
       DB_NAME: juheth
     ports:
-      - "8080:8080"   # Expone el puerto 8080 para la aplicación
+      - "8080:8080"   
     depends_on:
       - database
 

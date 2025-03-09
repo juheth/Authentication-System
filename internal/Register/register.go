@@ -8,14 +8,12 @@ import (
 
 var db *sql.DB
 
-// SetDB sets the database connection
 func SetDB(database *sql.DB) {
 	db = database
 }
 
-// RegisterFormHandler handles the registration form rendering
 func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
-	// Get the username and lastname from the query parameters
+
 	username := r.URL.Query().Get("username")
 	lastname := r.URL.Query().Get("lastname")
 
@@ -101,14 +99,12 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
 </body>
 </html>`
 
-	// Create and parse the template
 	t, err := template.New("register-form").Parse(tpl)
 	if err != nil {
 		http.Error(w, "Error al renderizar el formulario", http.StatusInternalServerError)
 		return
 	}
 
-	// Passing data to the template
 	data := struct {
 		Username string
 		Lastname string
@@ -117,7 +113,6 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
 		Lastname: lastname,
 	}
 
-	// Execute and send the result to the ResponseWriter
 	err = t.Execute(w, data)
 	if err != nil {
 		http.Error(w, "Error al renderizar el formulario", http.StatusInternalServerError)
@@ -125,20 +120,17 @@ func RegisterFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// RegisterHandler handles user registration
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse the form data
+
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "Error al analizar los datos del formulario", http.StatusBadRequest)
 		return
 	}
 
-	// Get values from the form
 	username := r.Form.Get("username")
 	lastname := r.Form.Get("lastname")
 
-	// Comprobar si los campos están vacíos
 	if username == "" || lastname == "" {
 		http.Error(w, "Los campos de usuario y apellido son requeridos", http.StatusBadRequest)
 		return

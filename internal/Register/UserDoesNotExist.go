@@ -9,27 +9,24 @@ import (
 
 func UserDoesNotExist(w http.ResponseWriter, r *http.Request) {
 
-	// analiza los datos enviados al formulario
 	err := r.ParseForm()
 	if err != nil {
 		http.Error(w, "error 400", http.StatusBadRequest)
 		return
 	}
 
-	//  obtener los valores del formulario
 	username := r.Form.Get("username")
 	lastname := r.Form.Get("lastname")
 
-	// consulta sql para verificar si el usuario existe
 	Verify := "SELECT username FROM Users WHERE username = ? AND lastname = ? LIMIT 1"
 
 	var result string
-	// lo escanea y manda el resultado
+
 	err = db.QueryRow(Verify, username, lastname).Scan(&result)
 
 	switch {
 	case err == sql.ErrNoRows:
-		// si no existe el usuario manda este mensaje:
+		// si no existe el usuario manda este mensaje
 		tpl := `<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -99,13 +96,11 @@ func UserDoesNotExist(w http.ResponseWriter, r *http.Request) {
 			Lastname: lastname,
 		}
 
-		// Crea una nueva plantilla "user-not-found" y analizar tpl
 		t, err := template.New("user-not-found").Parse(tpl)
 		if err != nil {
 			http.Error(w, "Error al renderizar el mensaje", http.StatusInternalServerError)
 			return
 		}
-		// ejecuta los datos enviados y manda un resultado al ResponseWriter(w)
 		err = t.Execute(w, data)
 		if err != nil {
 			http.Error(w, "Error al renderizar el mensaje", http.StatusInternalServerError)
@@ -113,12 +108,10 @@ func UserDoesNotExist(w http.ResponseWriter, r *http.Request) {
 		}
 
 	case err != nil:
-		// si no funciona manda un error 500
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 
 	default:
-		// si funciona manda el mensaje con el resultado obtenido del formulario
 		fmt.Fprintf(w, "Bienvenido, %s!", result)
 	}
 }
