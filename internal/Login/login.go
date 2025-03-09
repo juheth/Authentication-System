@@ -134,14 +134,12 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 </body>
 </html>`
 
-	// Create the template and parse the HTML
 	t, err := template.New("login-form").Parse(tpl)
 	if err != nil {
 		http.Error(w, "Error al analizar la plantilla", http.StatusInternalServerError)
 		return
 	}
 
-	// Structure for passing data to the template
 	type PageData struct {
 		Message          string
 		Username         string
@@ -150,19 +148,16 @@ func LoginFormHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	data := PageData{}
 
-	// Check if the "registered" query parameter is set
 	if r.URL.Query().Get("registered") == "true" {
 		data.Message = "Usuario registrado con éxito. Por favor, inicie sesión."
 	}
 
-	// Check if "showRegisterLink" is set to true
 	if r.URL.Query().Get("showRegisterLink") == "true" {
 		data.ShowRegisterLink = true
 		data.Username = r.URL.Query().Get("username")
 		data.Lastname = r.URL.Query().Get("lastname")
 	}
 
-	// Execute the template with data and send the result to the ResponseWriter
 	err = t.Execute(w, data)
 	if err != nil {
 		http.Error(w, "Error al ejecutar la plantilla", http.StatusInternalServerError)
